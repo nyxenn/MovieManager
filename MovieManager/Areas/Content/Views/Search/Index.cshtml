@@ -1,0 +1,34 @@
+﻿@model MovieSearchViewModel
+
+@{
+    ViewData["Title"] = "Search";
+}
+
+<form asp-action="Index" method="post">
+    <input type="text" asp-for="Title" value="Title" />
+
+    <input type="radio" asp-for="Type" value="movie" checked="" /> Movies
+    <input type="radio" asp-for="Type" value="series" /> Series
+    <input type="radio" asp-for="Type" value="episode" /> Episodes
+
+    <input type="radio" asp-for="Source" value="omdb" checked="" /> OMDb
+    <input type="radio" asp-for="Source" value="local" /> Local
+
+    <br />
+
+    <input type="submit" name="name" value="Submit" />
+</form>
+
+
+@if (@Model.Source == "omdb")
+{
+    <h2>@Model.Movie.Title</h2>
+
+    <p>@Model.Movie.Actors</p>
+    <p>@Model.Movie.Plot</p>
+}
+
+else if (Model.Source == "local")
+{
+    <p>Local</p>
+}

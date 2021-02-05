@@ -1,0 +1,81 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="landing-container">
+    <div class="background-overlay"></div>
+
+    <div class="company text-light">
+        <p class="c-title">MovieManager</p>
+        <p class="c-description">Easily manage your video collection online</p>
+        <br />
+        <a class="btn btn-light start-button" asp-area="Identity" asp-page="/Account/Login">To Login</a>
+    </div>
+
+
+</div>
+
+<style>
+    body {
+        margin: 0;
+    }
+
+    .landing-container {
+        width: 100vw;
+        height: 100vh;
+
+
+        /* https://www.webfx.com/blog/web-design/responsive-background-image/ */
+        /* Location of the image */
+        background-image: url("../images/theatreinside.jpg");
+        /* Background image is centered vertically and horizontally at all times */
+        background-position: center center;
+        /* Background image doesn't tile */
+        background-repeat: no-repeat;
+        /* Background image is fixed in the viewport so that it doesn't move when 
+            the content's height is greater than the image's height */
+        background-attachment: fixed;
+        /* This is what makes the background image rescale based
+            on the container's size */
+        background-size: cover;
+        /* Set a background color that will be displayed
+            while the background image is loading */
+        background-color: #464646;
+    }
+
+    .background-overlay {
+        background-color: rgba(28, 20, 18, 0.75);
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    .company {
+        position: fixed;
+        z-index: 1;
+        top: 32%;
+        left: 36%;
+        text-align: center;
+    }
+
+    .c-title {
+        font-size: 8vh;
+        font-weight: 900;
+        text-shadow: 3px 3px 1px #222;
+    }
+
+    .c-description {
+        font-size: 3.2vh;
+        text-shadow: 2px 2px 1px #222;
+    }
+
+    .start-button {
+        font-size: 2vh;
+        text-transform: uppercase;
+        font-weight: bold;
+        width: 40%;
+        margin-top: 2vh;
+    }
+</style>

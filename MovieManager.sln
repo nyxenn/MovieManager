@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30611.23
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MovieManager", "MovieManager\MovieManager.csproj", "{7DD26C53-F023-42B3-9CDC-91D8D33AB28E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MMApi", "MovieManager.API\MMApi.csproj", "{4ACED89A-33E1-4AD7-A668-2F172CAE204F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CE7CF011-DF82-4C20-85D0-B0C63626912A}"
+	ProjectSection(SolutionItems) = preProject
+		C:\Users\Jordi\Documents\Models.png = C:\Users\Jordi\Documents\Models.png
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7DD26C53-F023-42B3-9CDC-91D8D33AB28E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7DD26C53-F023-42B3-9CDC-91D8D33AB28E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7DD26C53-F023-42B3-9CDC-91D8D33AB28E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7DD26C53-F023-42B3-9CDC-91D8D33AB28E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4ACED89A-33E1-4AD7-A668-2F172CAE204F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4ACED89A-33E1-4AD7-A668-2F172CAE204F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4ACED89A-33E1-4AD7-A668-2F172CAE204F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4ACED89A-33E1-4AD7-A668-2F172CAE204F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1F8BAF7A-83DA-4F27-BB3D-E64BF191BCB4}
+	EndGlobalSection
+EndGlobal
