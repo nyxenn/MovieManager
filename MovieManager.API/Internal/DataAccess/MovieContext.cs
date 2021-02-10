@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿//using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using MMApi.Models;
 using System;
 using System.Collections.Generic;
@@ -7,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace MMApi.Internal.DataAccess
 {
-    public class MovieContext : Microsoft.EntityFrameworkCore.DbContext
+    public class MovieContext : DbContext
     {
         public MovieContext(DbContextOptions<MovieContext> options) : base(options)
         {
         }
 
-        public DbSet<DbMovie> Movies { get; set; }
+        public DbSet<Movie> Movies { get; set; }
         public DbSet<Genre> Genres { get; set; }
         public DbSet<Person> People { get; set; }
         public DbSet<UserList> UserLists { get; set; }
@@ -33,7 +34,7 @@ namespace MMApi.Internal.DataAccess
             base.OnModelCreating(builder);
             builder.HasDefaultSchema("Movie");
 
-            builder.Entity<DbMovie>().ToTable("Movies");
+            builder.Entity<Movie>().ToTable("Movies");
             builder.Entity<Genre>().ToTable("Genres");
             builder.Entity<Person>().ToTable("People");
             builder.Entity<UserList>().ToTable("UserLists");
@@ -47,7 +48,7 @@ namespace MMApi.Internal.DataAccess
             builder.Entity<MovieGenre>().HasOne(a => a.Genre).WithMany(b => b.Movies).HasForeignKey(a => a.GenreID);
 
             builder.Entity<MoviePerson>().HasKey(prop => new { prop.MovieID, prop.PersonID });
-            builder.Entity<MoviePerson>().HasOne(a => a.Movie).WithMany(b => b.Actors).HasForeignKey(a => a.MovieID);
+            builder.Entity<MoviePerson>().HasOne(a => a.Movie).WithMany(b => b.People).HasForeignKey(a => a.MovieID);
             builder.Entity<MoviePerson>().HasOne(a => a.Person).WithMany(b => b.Movies).HasForeignKey(a => a.PersonID);
         }
     }

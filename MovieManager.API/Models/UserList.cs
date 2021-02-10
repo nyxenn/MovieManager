@@ -18,8 +18,7 @@ namespace MMApi.Models
 
         public bool IsDefault { get; set; } = false;
 
-        public ICollection<ListMovie> Movies { get; set; }
-
+        public virtual ICollection<ListMovie> Movies { get; set; }
 
         public UserList(string userID, string title)
         {

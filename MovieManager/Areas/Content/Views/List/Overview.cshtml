@@ -1,0 +1,19 @@
+﻿@model ListOverviewViewModel
+
+@{
+    ViewData["Title"] = Model.UserList.Title;
+}
+
+<p>@Model.UserList.Title</p>
+
+@if (Model.UserList.Movies == null || Model.UserList.Movies.Count == 0)
+{
+    <p>No movies added yet!</p>
+}
+else
+{
+    @foreach (var listMovie in Model.UserList.Movies)
+    {
+        @*<p>@listMovie.Movie.Title</p>*@
+    }
+}

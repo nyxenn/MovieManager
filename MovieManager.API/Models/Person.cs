@@ -9,8 +9,14 @@ namespace MMApi.Models
     {
         [Key]
         public int PersonID { get; set; }
+
         public string Name { get; set; }
 
-        public ICollection<MoviePerson> Movies { get; set; }
+        public virtual ICollection<MoviePerson> Movies { get; set; }
+
+        public Person(string name)
+        {
+            Name = name;
+        }
     }
 }

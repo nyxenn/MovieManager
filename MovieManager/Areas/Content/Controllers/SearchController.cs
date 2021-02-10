@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using MMApi.DataAccess;
 using MMApi.Enums;
 using MMApi.Internal.DataAccess;
@@ -30,7 +32,7 @@ namespace MovieManager.Areas.Content.Controllers
             if (source == null || Enum.TryParse<SearchSource>(source, out SearchSource searchSource) == false)
             {
                 searchVM.Movie = null;
-                searchVM.Movies = new List<DbMovie>();
+                searchVM.Movies = new List<Movie>();
                 searchVM.Source = null;
                 searchVM.Title = null;
                 searchVM.Type = null;
@@ -39,15 +41,17 @@ namespace MovieManager.Areas.Content.Controllers
             {
                 if (searchSource == SearchSource.omdb)
                 {
-                    MovieProcessor processor = new MovieProcessor(_context);
-                    searchVM.Movie = await processor.GetApiMovie(title, type);
+                    MovieHandler movieHandler = new MovieHandler(_context);
+                    searchVM.Movie = await movieHandler.GetApiMovie(title, type);
                 }
                 else
                 {
-                    MovieProcessor processor = new MovieProcessor(_context);
-                    searchVM.Movies = await processor.GetLocalMovies(title, type);
+                    MovieHandler movieHandler = new MovieHandler(_context);
+                    searchVM.Movies = await movieHandler.GetLocalMovies(title, type);
                 }
             }
+
+            searchVM.UserLists = await _context.UserLists.Where(ul => ul.UserID == User.FindFirstValue(ClaimTypes.NameIdentifier)).ToListAsync();
 
             return View(searchVM);
         }
@@ -60,7 +64,7 @@ namespace MovieManager.Areas.Content.Controllers
             {
                 searchVM.Source = formData.Source;
 
-                MovieProcessor processor = new MovieProcessor(_context);
+                MovieHandler processor = new MovieHandler(_context);
                 searchVM.Movie = await processor.GetApiMovie(formData.Title, formData.Type);
 
                 return RedirectToAction("Index", new { source = formData.Source });
@@ -69,7 +73,7 @@ namespace MovieManager.Areas.Content.Controllers
             {
                 searchVM.Source = formData.Source;
 
-                MovieProcessor processor = new MovieProcessor(_context);
+                MovieHandler processor = new MovieHandler(_context);
                 searchVM.Movies = await processor.GetLocalMovies(formData.Title, formData.Type);
 
                 return RedirectToAction("Index", new { source = formData.Source });

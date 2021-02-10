@@ -4,14 +4,16 @@ using MMApi.Internal.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace MMApi.Migrations
 {
     [DbContext(typeof(MovieContext))]
-    partial class MovieContextModelSnapshot : ModelSnapshot
+    [Migration("20210210145301_Renamed Movie to ApiMovie, DbMovie to Movie")]
+    partial class RenamedMovietoApiMovieDbMovietoMovie
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -97,10 +99,24 @@ namespace MMApi.Migrations
                     b.Property<int>("PersonID")
                         .HasColumnType("int");
 
+                    b.Property<int?>("MovieID1")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MovieID2")
+                        .HasColumnType("int");
+
                     b.Property<string>("Type")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("MovieID", "PersonID");
+
+                    b.HasIndex("MovieID1")
+                        .IsUnique()
+                        .HasFilter("[MovieID1] IS NOT NULL");
+
+                    b.HasIndex("MovieID2")
+                        .IsUnique()
+                        .HasFilter("[MovieID2] IS NOT NULL");
 
                     b.HasIndex("PersonID");
 
@@ -178,10 +194,18 @@ namespace MMApi.Migrations
             modelBuilder.Entity("MMApi.Models.MoviePerson", b =>
                 {
                     b.HasOne("MMApi.Models.Movie", "Movie")
-                        .WithMany("People")
+                        .WithMany("Actors")
                         .HasForeignKey("MovieID")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("MMApi.Models.Movie", null)
+                        .WithOne("Director")
+                        .HasForeignKey("MMApi.Models.MoviePerson", "MovieID1");
+
+                    b.HasOne("MMApi.Models.Movie", null)
+                        .WithOne("Writer")
+                        .HasForeignKey("MMApi.Models.MoviePerson", "MovieID2");
 
                     b.HasOne("MMApi.Models.Person", "Person")
                         .WithMany("Movies")

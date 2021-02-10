@@ -6,10 +6,10 @@ namespace MMApi.Models
 {
     public class ListMovie
     {
-        public int? UserListID { get; set; }
+        public int UserListID { get; set; }
         public UserList UserList { get; set; }
 
-        public int? MovieID { get; set; }
-        public DbMovie Movie { get; set; }
+        public int MovieID { get; set; }
+        public Movie Movie { get; set; }
     }
 }

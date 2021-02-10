@@ -4,14 +4,16 @@ using MMApi.Internal.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace MMApi.Migrations
 {
     [DbContext(typeof(MovieContext))]
-    partial class MovieContextModelSnapshot : ModelSnapshot
+    [Migration("20210210143323_Renamed MovieID To DbMovieID")]
+    partial class RenamedMovieIDToDbMovieID
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -19,6 +21,46 @@ namespace MMApi.Migrations
                 .HasAnnotation("ProductVersion", "3.1.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+            modelBuilder.Entity("MMApi.Models.DbMovie", b =>
+                {
+                    b.Property<int>("DbMovieID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int?>("DirectorMovieID")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("DirectorPersonID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Poster")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("WriterMovieID")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("WriterPersonID")
+                        .HasColumnType("int");
+
+                    b.HasKey("DbMovieID");
+
+                    b.HasIndex("DirectorMovieID", "DirectorPersonID");
+
+                    b.HasIndex("WriterMovieID", "WriterPersonID");
+
+                    b.ToTable("Movies");
+                });
 
             modelBuilder.Entity("MMApi.Models.Genre", b =>
                 {
@@ -48,30 +90,6 @@ namespace MMApi.Migrations
                     b.HasIndex("MovieID");
 
                     b.ToTable("ListMovies");
-                });
-
-            modelBuilder.Entity("MMApi.Models.Movie", b =>
-                {
-                    b.Property<int>("MovieID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Poster")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("MovieID");
-
-                    b.ToTable("Movies");
                 });
 
             modelBuilder.Entity("MMApi.Models.MovieGenre", b =>
@@ -145,9 +163,20 @@ namespace MMApi.Migrations
                     b.ToTable("UserLists");
                 });
 
+            modelBuilder.Entity("MMApi.Models.DbMovie", b =>
+                {
+                    b.HasOne("MMApi.Models.MoviePerson", "Director")
+                        .WithMany()
+                        .HasForeignKey("DirectorMovieID", "DirectorPersonID");
+
+                    b.HasOne("MMApi.Models.MoviePerson", "Writer")
+                        .WithMany()
+                        .HasForeignKey("WriterMovieID", "WriterPersonID");
+                });
+
             modelBuilder.Entity("MMApi.Models.ListMovie", b =>
                 {
-                    b.HasOne("MMApi.Models.Movie", "Movie")
+                    b.HasOne("MMApi.Models.DbMovie", "Movie")
                         .WithMany("Lists")
                         .HasForeignKey("MovieID")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -168,7 +197,7 @@ namespace MMApi.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("MMApi.Models.Movie", "Movie")
+                    b.HasOne("MMApi.Models.DbMovie", "Movie")
                         .WithMany("Genres")
                         .HasForeignKey("MovieID")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -177,10 +206,10 @@ namespace MMApi.Migrations
 
             modelBuilder.Entity("MMApi.Models.MoviePerson", b =>
                 {
-                    b.HasOne("MMApi.Models.Movie", "Movie")
-                        .WithMany("People")
+                    b.HasOne("MMApi.Models.DbMovie", "Movie")
+                        .WithMany("Actors")
                         .HasForeignKey("MovieID")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("MMApi.Models.Person", "Person")

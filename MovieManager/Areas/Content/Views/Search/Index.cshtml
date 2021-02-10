@@ -5,10 +5,10 @@
 }
 
 <form asp-action="Index" method="post">
-    <input type="text" asp-for="Title" value="Title" />
+    <input type="text" asp-for="Title" value="peaky" />
 
-    <input type="radio" asp-for="Type" value="movie" checked="" /> Movies
-    <input type="radio" asp-for="Type" value="series" /> Series
+    <input type="radio" asp-for="Type" value="movie" /> Movies
+    <input type="radio" asp-for="Type" value="series" checked="" /> Series
     <input type="radio" asp-for="Type" value="episode" /> Episodes
 
     <input type="radio" asp-for="Source" value="omdb" checked="" /> OMDb
@@ -26,9 +26,44 @@
 
     <p>@Model.Movie.Actors</p>
     <p>@Model.Movie.Plot</p>
+
+    <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Dropdown button
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            @foreach (var list in Model.UserLists)
+            {
+                <button onclick="addToList('@list.UserListID', '@Model.Movie.Title', '@Model.Movie.Type', '@list.IsDefault');">
+                    @list.Title
+                </button>
+            }
+        </div>
+    </div>
 }
 
 else if (Model.Source == "local")
 {
     <p>Local</p>
+}
+
+@section Scripts{
+
+    <script type="text/javascript">
+
+        function addToList(listID, title, type, isDefault) {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("AddToList", "List")',
+                data: { listID: listID, title: title, type: type, isDefault: isDefault },
+                async: true,
+                success: function (msg) {
+                    console.log(msg);
+                },
+                error: function () {
+                    return "error";
+                }
+            });
+        }
+    </script>
 }
