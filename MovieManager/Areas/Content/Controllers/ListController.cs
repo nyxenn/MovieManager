@@ -12,99 +12,123 @@ using MMApi.DataAccess;
 using MMApi.Helpers;
 using MMApi.Internal.DataAccess;
 using MMApi.Models;
+using MovieManager.Areas.Content.Models;
 using MovieManager.Areas.Content.ViewModels;
-using MovieManager.Data;
-using MovieManager.Models;
 
 namespace MovieManager.Areas.Content.Controllers
 {
     [Area("Content")]
-    [Authorize]
     public class ListController : Controller
     {
         private readonly MovieContext _context;
+        private readonly IUserLists _userLists;
+        private readonly UserListHandler _listHandler;
+        private readonly MovieHandler _movieHandler;
 
-        public ListController(MovieContext context)
+        public ListController(MovieContext context, IUserLists userLists)
         {
             _context = context;
+            _userLists = userLists;
+            _listHandler = new UserListHandler(_context);
+            _movieHandler = new MovieHandler(_context);
         }
 
         public IActionResult Index()
         {
-            UserListsViewModel listsViewModel = new UserListsViewModel();
+            return View();
+        }
 
-            var lists =
-                _context.UserLists
-                .Where(ul => ul.UserID == User.FindFirstValue(ClaimTypes.NameIdentifier));
+        [HttpPost]
+        public async Task<JsonResult> Create([FromBody] CreateList list)
+        {
+            var userList = await _listHandler.Create(User.FindFirstValue(ClaimTypes.NameIdentifier), list.Title);
 
-            //var listMovies =
-            //    _context.ListMovies
-            //    .Where(lm => lm.UserID == User.FindFirstValue(ClaimTypes.NameIdentifier))
-            //    .ToList();
+            return Json(userList);
+        }
 
-            //UserList defaultList = null;
-            //List<int> addedListIds = new List<int>();
+        [HttpDelete]
+        public async Task<JsonResult> Delete(int id)
+        {
+            if (id < 0)
+            {
+                return Json(-1);
+            }
 
-            //foreach (var lm in listMovies)
-            //{
-            //    UserList userList = _context.UserLists.FirstOrDefault(ul => ul.UserListID == lm.UserListID);
+            var deletedListID = await _listHandler.Delete(id, User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-            //    if (lm.IsDefault)
-            //    {
-            //        defaultList = userList;
-            //    }
+            return Json(deletedListID);
+        }
 
-            //    addedListIds.Add(userList.UserListID);
-            //}
+        public async Task<JsonResult> GetLists()
+        {
+            var userLists = await _listHandler.GetListsForUser(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            _userLists.AddItemsToList(userLists);
 
-            listsViewModel.Lists = lists.ToList();
-
-            return View(listsViewModel);
+            return Json(userLists);
         }
 
         public IActionResult Overview(int id)
         {
             ListOverviewViewModel overviewVM = new ListOverviewViewModel();
 
-            //var list =
-            //    _context.UserLists
-            //    .Include(ul => ul.Movies)
-            //        .ThenInclude(ulm => ulm.Movie)
-            //    .FirstOrDefault(ul => ul.UserListID == id);
+            UserList list = _listHandler.GetListOverview(listID: id);
 
-            //overviewVM.UserList = list;
+            overviewVM.UserList = list;
 
             return View(overviewVM);
         }
 
-        public void Delete(int id)
+        [HttpPost]
+        public async Task<JsonResult> AddToList([FromBody] AddRemoveList requestDetails)
         {
-            return;
+            return Json(await HandleAddRemoveRequest(requestDetails, "add"));
         }
 
-        [HttpPost]
-        public async Task<bool> AddToList(int listID, string title, string type, bool isDefault = false)
+        public async Task<JsonResult> RemoveFromList([FromBody] AddRemoveList requestDetails)
+        {
+            return Json(await HandleAddRemoveRequest(requestDetails, "remove"));
+        }
+
+        public async Task<int> HandleAddRemoveRequest (AddRemoveList requestDetails, string action)
         {
             try
             {
-                string userID = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                UserListHandler userListHandler = new UserListHandler(_context);
-
-                if (isDefault)
+                if (requestDetails.ListID <= 0 || requestDetails.Title == null || requestDetails.Type == null)
                 {
-                    await userListHandler.AddToDefaultList(listID, title, type, userID);
+                    throw new ArgumentNullException();
+                }
+
+                string userID = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                if (action == "remove")
+                {
+                    await _listHandler.RemoveFromList(requestDetails.ListID, requestDetails.Title, requestDetails.Type);
+                }
+                else if (requestDetails.IsDefault)
+                {
+                    await _listHandler.AddToDefaultList(requestDetails.ListID, requestDetails.Title, requestDetails.Type, userID);
                 }
                 else
                 {
-                    userListHandler.AddToList(listID);
+                    await _listHandler.AddCustomToList(requestDetails.ListID, requestDetails.Title, requestDetails.Type);
                 }
 
-                return true;
+                return requestDetails.ListID;
             }
             catch (Exception)
             {
-                return false;
+                return -1;
             }
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> GetUserLists(string title, string type)
+        {
+            Movie movie = await _movieHandler.GetExistingLocalMovie(title, type);
+            List<UserList> lists = _userLists.GetLists();
+            var listsWithMovieAdded = await _listHandler.GetListsWithMovieAdded(lists, movie);
+
+            return Json(listsWithMovieAdded);
         }
     }
 }

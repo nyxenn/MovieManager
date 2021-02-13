@@ -34,13 +34,23 @@ namespace MMApi.Helpers
                 }
             }
 
-            if (listMovie == null)
+            if (listMovie != null)
             {
-                listMovie = new ListMovie();
+                _context.ListMovies.Remove(listMovie);   
             }
 
+            listMovie = new ListMovie();
             listMovie.UserListID = listID;
             _context.ListMovies.Add(listMovie);
+
+            return listMovie;
+        }
+
+        public async Task<ListMovie> GetListMovie(int listID, int movieID)
+        {
+            ListMovie listMovie =
+                await _context.ListMovies
+                .FirstOrDefaultAsync(lm => lm.UserListID == listID && lm.MovieID == movieID);
 
             return listMovie;
         }

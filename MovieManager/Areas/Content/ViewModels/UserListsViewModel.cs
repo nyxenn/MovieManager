@@ -8,6 +8,6 @@ namespace MovieManager.Areas.Content.ViewModels
 {
     public class UserListsViewModel
     {
-        public List<UserList> Lists { get; set; }
+        public List<UserList> UserLists { get; set; }
     }
 }

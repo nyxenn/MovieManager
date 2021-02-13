@@ -15,6 +15,7 @@ using Microsoft.Extensions.Hosting;
 using MovieManager.Models;
 using MovieManager.Areas.Identity.Validators;
 using MMApi.Internal.DataAccess;
+using MovieManager.Areas.Content.Models;
 
 namespace MovieManager
 {
@@ -49,6 +50,8 @@ namespace MovieManager
 
             services.AddControllersWithViews();
             services.AddRazorPages();
+
+            services.AddSingleton<IUserLists, UserLists>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

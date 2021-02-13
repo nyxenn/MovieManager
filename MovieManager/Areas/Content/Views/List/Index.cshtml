@@ -5,25 +5,4 @@
 }
 
 
-<table>
-    <tr>
-        <th>List</th>
-        <th>Actions</th>
-    </tr>
-    @foreach (var list in @Model.Lists)
-    {
-        <tr>
-            <td>
-                <a asp-area="Content" asp-controller="List" asp-action="Details" asp-route-id="@list.UserListID">@list.Title</a>
-            </td>
-            <td>
-                <button 
-                        class="btn btn-danger"
-                        asp-is-disabled="@(!list.IsDefault)"
-                        onclick="window.location.href = ('@Url.Action("Delete", "List", new { id=@list.UserListID })')">
-                    Delete
-                </button>
-            </td>
-        </tr>
-    }
-</table>
+<lists-table />

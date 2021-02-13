@@ -75,6 +75,15 @@ namespace MMApi.DataAccess
             return movies;
         }
 
+        public async Task<Movie> GetExistingLocalMovie(string title, string type)
+        {
+            Movie movie =
+                await _context.Movies
+                .FirstOrDefaultAsync(m => m.Title.ToLower().Equals(title.ToLower()) && m.Type == type);
+
+            return movie;
+        }
+
         public async Task<Movie> CreateMovie(string title, string type)
         {
             ApiMovie apiMovie = await GetApiMovie(title, type);

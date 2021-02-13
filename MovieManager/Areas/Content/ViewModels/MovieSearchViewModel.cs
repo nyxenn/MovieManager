@@ -9,11 +9,18 @@ namespace MovieManager.Areas.Content.ViewModels
     public class MovieSearchViewModel
     {
         public ApiMovie? Movie { get; set; }
+
         public List<Movie> Movies { get; set; } = new List<Movie>();
-        public List<UserList> UserLists { get; set; } = new List<UserList>();
+
         public string? Title { get; set; }
+
         public string? Type { get; set; }
+
         public string? Source { get; set; }
+
         public int? DefaultList { get; set; }
+
+        public string? UserID { get; set; }
+
     }
 }

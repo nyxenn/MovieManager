@@ -9,6 +9,7 @@ using MMApi.DataAccess;
 using MMApi.Enums;
 using MMApi.Internal.DataAccess;
 using MMApi.Models;
+using MovieManager.Areas.Content.Models;
 using MovieManager.Areas.Content.ViewModels;
 
 namespace MovieManager.Areas.Content.Controllers
@@ -17,11 +18,13 @@ namespace MovieManager.Areas.Content.Controllers
     public class SearchController : Controller
     {
         private readonly MovieContext _context;
+        private readonly IUserLists _userLists;
         public static MovieSearchViewModel searchVM = new MovieSearchViewModel();
 
-        public SearchController(MovieContext context)
+        public SearchController(MovieContext context, IUserLists userLists)
         {
             _context = context;
+            _userLists = userLists;
         }
 
         public async Task<IActionResult> Index(string? title, string? type, string? source)
@@ -51,7 +54,11 @@ namespace MovieManager.Areas.Content.Controllers
                 }
             }
 
-            searchVM.UserLists = await _context.UserLists.Where(ul => ul.UserID == User.FindFirstValue(ClaimTypes.NameIdentifier)).ToListAsync();
+            string userID = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            searchVM.UserID = userID;
+
+            var lists = await _context.UserLists.Where(ul => ul.UserID == userID).ToListAsync();
+            _userLists.AddItemsToList(lists);
 
             return View(searchVM);
         }

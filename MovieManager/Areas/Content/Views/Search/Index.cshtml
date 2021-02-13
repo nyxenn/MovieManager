@@ -11,8 +11,8 @@
     <input type="radio" asp-for="Type" value="series" checked="" /> Series
     <input type="radio" asp-for="Type" value="episode" /> Episodes
 
-    <input type="radio" asp-for="Source" value="omdb" checked="" /> OMDb
-    <input type="radio" asp-for="Source" value="local" /> Local
+    <input type="radio" asp-for="Source" value="omdb" /> OMDb
+    <input type="radio" asp-for="Source" value="local" checked="" /> Local
 
     <br />
 
@@ -27,43 +27,25 @@
     <p>@Model.Movie.Actors</p>
     <p>@Model.Movie.Plot</p>
 
-    <div class="dropdown">
-        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Dropdown button
-        </button>
-        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            @foreach (var list in Model.UserLists)
-            {
-                <button onclick="addToList('@list.UserListID', '@Model.Movie.Title', '@Model.Movie.Type', '@list.IsDefault');">
-                    @list.Title
-                </button>
-            }
-        </div>
-    </div>
+    <add-to-list uid="@Model.UserID" title="@Model.Movie.Title" type="@Model.Movie.Type" />
 }
 
 else if (Model.Source == "local")
 {
-    <p>Local</p>
-}
+    if (Model.Movies.Count > 0)
+    {
+        foreach (var movie in Model.Movies)
+        {
+            <h2>@movie.Title</h2>
 
-@section Scripts{
+            <p>@movie.Type</p>
 
-    <script type="text/javascript">
-
-        function addToList(listID, title, type, isDefault) {
-            $.ajax({
-                type: "POST",
-                url: '@Url.Action("AddToList", "List")',
-                data: { listID: listID, title: title, type: type, isDefault: isDefault },
-                async: true,
-                success: function (msg) {
-                    console.log(msg);
-                },
-                error: function () {
-                    return "error";
-                }
-            });
+            <add-to-list title="@movie.Title" type="@movie.Type" />
         }
-    </script>
+    }
+    else
+    {
+        <p>No movies found matching your criteria.</p>
+    }
+
 }
