@@ -35,31 +35,39 @@
         <div class="movie-details-section">
             <p>
                 <span class="details-title"><b>Actors</b></span><br />
-                <span class="details-value">@Model.Actors</span>
+                <span class="details-value">
+                    <vc:movie-links links="@Model.Actors" type="person"></vc:movie-links>
+                </span>
             </p>
 
             <p>
                 <span class="details-title"><b>Director</b></span><br />
-                <span class="details-value">@Model.Director</span>
+                <span class="details-value">
+                    <vc:movie-links links="@Model.Director" type="person"></vc:movie-links>
+                </span>
             </p>
 
             <p>
                 <span class="details-title"><b>Writer</b></span><br />
-                <span class="details-value">@Model.Writer</span>
+                <span class="details-value">
+                    <vc:movie-links links="@Model.Writer" type="person"></vc:movie-links>
+                </span>
             </p>
+        </div>
 
+        <div class="movie-details-section">
             <p>
                 <span class="details-title"><b>Genres</b></span><br />
-                <span class="details-value">@Model.Genre</span>
+                <span class="details-value">
+                    <vc:movie-links links="@Model.Genre" type="genre"></vc:movie-links>
+                </span>
             </p>
 
             <p>
                 <span class="details-title"><b>Runtime</b></span><br />
                 <span class="details-value">@Model.Runtime</span>
             </p>
-        </div>
 
-        <div class="movie-details-section">
             <p>
                 <span class="details-title"><b>imdb Rating</b></span><br />
                 <span class="details-value">@Model.imdbRating from @Model.imdbVotes votes</span>

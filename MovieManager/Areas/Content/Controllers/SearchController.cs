@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MMApi.DataAccess;
@@ -15,6 +16,7 @@ using MovieManager.Areas.Content.ViewModels;
 namespace MovieManager.Areas.Content.Controllers
 {
     [Area("Content")]
+    [Authorize]
     public class SearchController : Controller
     {
         private readonly int _pageSize = 10;
@@ -34,24 +36,51 @@ namespace MovieManager.Areas.Content.Controllers
             searchVM.Movies = new List<Movie>();
             searchVM.Source = "local";
             searchVM.Title = "";
-            searchVM.Type = "movie";
+            searchVM.Type = "any";
             searchVM.Page = 1;
             searchVM.Person = "";
             searchVM.Genre = "";
         }
 
-        private SearchSource PopulateViewModel(string title = "", string type = "", string source = "local", string genre = "", string person = "", int page = 1)
+        private SearchSource PopulateViewModel
+            (string title = "",
+            string source = "local",
+            string genre = "",
+            string person = "",
+            int page = 1,
+            bool isMovie = false,
+            bool isSeries = false)
         {
             SearchSource result = SearchSource.local;
+
+            if (source != "" && Enum.TryParse<SearchSource>(source, out SearchSource searchSource))
+            {
+                result = searchSource;
+                searchVM.Source = source;
+            }
+            else
+            {
+                ResetViewModel();
+            }
 
             if (title != "")
             {
                 searchVM.Title = title;
             }
 
-            if (type != "")
+            if (isMovie)
             {
-                searchVM.Type = type;
+                searchVM.Type = "movie";
+            }
+
+            if (isSeries)
+            {
+                searchVM.Type = "series";
+            }
+
+            if (isMovie && isSeries)
+            {
+                searchVM.Type = "any";
             }
 
             if (searchVM.Source != source)
@@ -73,18 +102,10 @@ namespace MovieManager.Areas.Content.Controllers
                 searchVM.Person = person;
             }
 
-            if (source != "" && Enum.TryParse<SearchSource>(source, out SearchSource searchSource))
-            {
-                result = searchSource;
-                searchVM.Source = source;
-            }
-            else
-            {
-                ResetViewModel();
-            }
-
             string userID = User.FindFirstValue(ClaimTypes.NameIdentifier);
             searchVM.UserID = userID;
+            searchVM.IsMovie = isMovie;
+            searchVM.IsSeries = isSeries;
 
             return result;
         }
@@ -93,7 +114,9 @@ namespace MovieManager.Areas.Content.Controllers
         {
             try
             {
-                SearchSource searchSource = PopulateViewModel(title, type, source, genre, person, page);
+                bool isMovie = type == "movie" ? true : type == "any" ? true : false;
+                bool isSeries = type == "series" ? true : type == "any" ? true : false;
+                SearchSource searchSource = PopulateViewModel(title, source, genre, person, page, isMovie, isSeries);
 
                 if (searchSource == SearchSource.omdb)
                 {
@@ -114,42 +137,11 @@ namespace MovieManager.Areas.Content.Controllers
             }
         }
 
-        //public async Task<IActionResult> Index(string? title, string? type, string? source)
-        //{
-        //    searchVM.Title = title != null ? title : "";
-        //    searchVM.Type = type != null ? type : "";
-
-        //    if (source == null || Enum.TryParse<SearchSource>(source, out SearchSource searchSource) == false)
-        //    {
-        //        searchVM.Movie = null;
-        //        searchVM.Movies = new List<Movie>();
-        //        searchVM.Source = null;
-        //        searchVM.Title = null;
-        //        searchVM.Type = null;
-        //    }
-        //    else if (title != null && title != "")
-        //    {
-        //        if (searchSource == SearchSource.omdb)
-        //        {
-        //            MovieHandler movieHandler = new MovieHandler(_context);
-        //            searchVM.Movie = await movieHandler.GetApiMovie(title, type);
-        //        }
-        //    }
-
-        //    string userID = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        //    searchVM.UserID = userID;
-
-        //    var lists = await _context.UserLists.Where(ul => ul.UserID == userID).ToListAsync();
-        //    _userLists.AddItemsToList(lists);
-
-        //    return View(searchVM);
-        //}
-
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Index([Bind("Title", "Type", "Source", "Person", "Genre", "Page")] MovieSearchViewModel data)
+        public IActionResult Index([Bind("Title", "Source", "Person", "Genre", "Page", "IsMovie", "IsSeries")] MovieSearchViewModel data)
         {
-            PopulateViewModel(data.Title, data.Type, data.Source, data.Genre, data.Person, data.Page);
+            PopulateViewModel(data.Title, data.Source, data.Genre, data.Person, data.Page, data.IsMovie, data.IsSeries);
 
             return RedirectToAction("Index", new
             {
@@ -160,22 +152,6 @@ namespace MovieManager.Areas.Content.Controllers
                 genre = searchVM.Genre,
                 page = searchVM.Page
             });
-
-            //if (formData.Source == "omdb")
-            //{
-            //    searchVM.Source = formData.Source;
-
-            //    MovieHandler processor = new MovieHandler(_context);
-            //    searchVM.Movie = await processor.GetApiMovie(formData.Title, formData.Type);
-
-            //    return RedirectToAction("Index", new { title = formData.Title, type = formData.Type, source = formData.Source });
-            //}
-            //else if (formData.Source == "local")
-            //{
-            //    return RedirectToAction("Index", new { title = formData.Title, type = formData.Type, source = formData.Source });
-            //}
-            
-            //return RedirectToAction("Index");
         }
     }
 }

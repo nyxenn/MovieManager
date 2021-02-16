@@ -117,7 +117,7 @@ namespace MMApi.DataAccess
                 movie = await _movieHandler.CreateMovie(title, type);
             }
 
-            ListMovie listMovie = await _listMovieHelper.GetDefaultListMovieForUser(userID, listID);
+            ListMovie listMovie = await _listMovieHelper.GetDefaultListMovieForUser(userID, listID, movie.MovieID);
 
             if (movie.Lists == null)
             {

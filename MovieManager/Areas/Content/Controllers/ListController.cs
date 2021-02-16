@@ -18,6 +18,7 @@ using MovieManager.Areas.Content.ViewModels;
 namespace MovieManager.Areas.Content.Controllers
 {
     [Area("Content")]
+    [Authorize]
     public class ListController : Controller
     {
         private readonly MovieContext _context;
@@ -87,6 +88,14 @@ namespace MovieManager.Areas.Content.Controllers
         public async Task<JsonResult> RemoveFromList([FromBody] AddRemoveList requestDetails)
         {
             return Json(await HandleAddRemoveRequest(requestDetails, "remove"));
+        }
+
+        public async Task<IActionResult> RemoveMovieFromList(int listID, string movieTitle, string movieType, bool isDefault)
+        {
+            AddRemoveList removeReq = new AddRemoveList(listID, movieTitle, movieType, isDefault);
+            await HandleAddRemoveRequest(removeReq, "remove");
+
+            return RedirectToAction("Overview", new { id = listID });
         }
 
         public async Task<int> HandleAddRemoveRequest (AddRemoveList requestDetails, string action)

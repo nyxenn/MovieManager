@@ -67,7 +67,7 @@ namespace MMApi.DataAccess
             query["s"] = title;
             query["page"] = "" + page;
 
-            if (type != null && Enum.TryParse<SearchType>(type, out SearchType searchType))
+            if (Enum.TryParse<SearchType>(type, out SearchType searchType))
             {
                 query["type"] = type;
             }
@@ -99,19 +99,60 @@ namespace MMApi.DataAccess
             return apiListItems;
         }
 
-        public async Task<List<Movie>> GetLocalMovies(string title, string type)
+        public async Task<List<Movie>> GetLocalMovies(string title, string type, int page = 1)
         {
             List<Movie> movies = new List<Movie>();
 
-            if (type == null || Enum.TryParse<SearchType>(type, out SearchType searchType) == false)
-            {
-                type = "movie";
-            }
-
            var dbMovies =
                 _context.Movies
+                .Skip((page - 1) * 10)
                 .Where(m => m.Title.ToLower().Contains(title.ToLower()))
-                .Where(m => m.Type.ToLower() == type.ToLower());
+                .Take(10);
+
+            if (type == "movie" || type == "series")
+            {
+                dbMovies = dbMovies.Where(m => m.Type == type);
+            }
+
+            movies = await dbMovies.ToListAsync();
+
+            return movies;
+        }
+
+        public async Task<List<Movie>> GetLocalMoviesByGenre(string genre, int page = 1)
+        {
+            List<Movie> movies = new List<Movie>();
+
+            if (genre == "")
+            {
+                return movies;
+            }
+
+            var dbMovies =
+                _context.Movies
+                .Skip((page - 1) * 10)
+                .Where(m => m.Genres.Any(mg => mg.Genre.Name.ToLower() == genre.ToLower()))
+                .Take(10);
+
+            movies = await dbMovies.ToListAsync();
+
+            return movies;
+        }
+
+        public async Task<List<Movie>> GetLocalMoviesByPerson(string person, int page = 1)
+        {
+            List<Movie> movies = new List<Movie>();
+
+            if (person == "")
+            {
+                return movies;
+            }
+
+            var dbMovies =
+                _context.Movies
+                .Skip((page - 1) * 10)
+                .Where(m => m.People.Any(mp => mp.Person.Name.ToLower().Contains(person.ToLower())))
+                .Take(10);
 
             movies = await dbMovies.ToListAsync();
 
@@ -149,6 +190,32 @@ namespace MMApi.DataAccess
             await _context.SaveChangesAsync();
 
             return movie;
+        }
+
+        public async Task<List<Movie>> GetLatestAdditions(int amount = 5)
+        {
+            List<Movie> movies = new List<Movie>();
+
+            movies =
+                await _context.Movies
+                .OrderByDescending(m => m.MovieID)
+                .Take(amount)
+                .ToListAsync();
+
+            return movies;
+        }
+
+        public async Task<List<Movie>> GetRandomMovies(int amount = 5)
+        {
+            List<Movie> movies = new List<Movie>();
+
+            movies =
+                await _context.Movies
+                .OrderBy(m => Guid.NewGuid())
+                .Take(amount)
+                .ToListAsync();
+
+            return movies;
         }
     }
 }

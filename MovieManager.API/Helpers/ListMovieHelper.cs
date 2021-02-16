@@ -18,7 +18,7 @@ namespace MMApi.Helpers
             _context = context;
         }
 
-        public async Task<ListMovie> GetDefaultListMovieForUser(string userID, int listID)
+        public async Task<ListMovie> GetDefaultListMovieForUser(string userID, int listID, int movieID)
         {
             List<UserList> defaultLists = await _context.UserLists.Where(ul => ul.UserID == userID && ul.IsDefault).ToListAsync();
             UserList defaultList = null;
@@ -26,7 +26,7 @@ namespace MMApi.Helpers
 
             foreach (var dl in defaultLists)
             {
-                listMovie = await _context.ListMovies.FirstOrDefaultAsync(lm => lm.UserListID == dl.UserListID);
+                listMovie = await _context.ListMovies.FirstOrDefaultAsync(lm => lm.UserListID == dl.UserListID && lm.MovieID == movieID);
                 if (listMovie != null)
                 {
                     defaultList = dl;

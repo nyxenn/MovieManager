@@ -44,7 +44,7 @@
     </table>
 
     <span class="create-list-btn" @click="showCreateForm()">
-        <i class="fas fa-plus-circle"></i> <span class="create-list-text">Add to list</span>
+        <i class="fas fa-plus-circle"></i> <span class="create-list-text">Create list</span>
     </span>
 </div>
 

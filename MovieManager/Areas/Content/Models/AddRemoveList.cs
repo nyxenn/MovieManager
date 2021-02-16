@@ -11,5 +11,17 @@ namespace MovieManager.Areas.Content.Models
         public string Title { get; set; }
         public string Type { get; set; }
         public bool IsDefault { get; set; }
+
+        public AddRemoveList()
+        {
+        }
+
+        public AddRemoveList(int listID, string title, string type, bool isDefault)
+        {
+            ListID = listID;
+            Title = title;
+            Type = type;
+            IsDefault = isDefault;
+        }
     }
 }

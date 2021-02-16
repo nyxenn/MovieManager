@@ -1,0 +1,28 @@
+﻿@model MovieLinksViewModel
+
+@{
+    var lasttItem = Model.Links[Model.Links.Count() - 1];
+}
+
+@foreach (var link in Model.Links)
+{
+    if (link == "N/A")
+    {
+        @("N/A")
+    }
+    else
+    {
+        if (Model.Type == "genre")
+        {
+            <a asp-area="Content" asp-controller="Search" asp-action="Index" asp-route-genre="@link" asp-route-type="any">@link</a>
+        }
+        else
+        {
+            <a asp-area="Content" asp-controller="Search" asp-action="Index" asp-route-person="@link" asp-route-type="any">@link</a>
+        }
+        if (link != lasttItem)
+        {
+            <br />
+        }
+    }
+}

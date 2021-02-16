@@ -1,22 +1,111 @@
-﻿@model MovieDetailsViewModel
+﻿@model HomeViewModel
 
 @{
+    ViewData["Title"] = "Home";
 }
 
-<p>Content area</p>
+<div class="home-container">
+    <h2>Home</h2>
 
-<br />
+    <div class="latest-additions">
+        <h3>Latest Additions</h3>
 
-@if (Model.Movie != null)
-{
-    <p>@Model.Movie.MovieID</p>
-    <p>@Model.Movie.Title</p>
-    <p>@Model.Movie.Type</p>
+        <div class="latest-additions-movies">
+            @if (Model.LatestAdditions != null && Model.LatestAdditions.Count() > 0)
+            {
+                foreach (var movie in Model.LatestAdditions)
+                {
+                    <div class="home-movies-item">
+                        <a asp-area="Content"
+                           asp-controller="Movie"
+                           asp-action="Details"
+                           asp-route-title="@movie.Title"
+                           asp-route-type="@movie.Type">
+                            <img src="@movie.Poster" alt="@movie.Title" class="home-movies-item-poster" />
+                            <p class="home-movies-item-title">
+                                @movie.Title
+                            </p>
+                        </a>
+                    </div>
+                }
 
-    <hr />
+            }
+            else
+            {
+                <p>Nothing to show yet</p>
+            }
+        </div>
+    </div>
 
-    @foreach (var moviePerson in Model.Movie.People)
-    {
-        <p>@moviePerson.Person.Name</p>
-    }
+    <div class="movies-showcase">
+        <h3>Showcase</h3>
+
+        <div class="movies-showcase-movies">
+            @if (Model.RandomMovies != null && Model.RandomMovies.Count() > 0)
+            {
+                foreach (var movie in Model.RandomMovies)
+                {
+                    <div class="home-movies-item">
+                        <a asp-area="Content"
+                           asp-controller="Movie"
+                           asp-action="Details"
+                           asp-route-title="@movie.Title"
+                           asp-route-type="@movie.Type">
+                            <img src="@movie.Poster" alt="@movie.Title" class="home-movies-item-poster" />
+                            <p class="home-movies-item-title">
+                                @movie.Title
+                            </p>
+                        </a>
+                    </div>
+                }
+            }
+            else
+            {
+                <p>Nothing to show yet</p>
+            }
+        </div>
+    </div>
+</div>
+
+@section Style {
+    <style>
+        .home-container {
+            width: 100%;
+            height: 100%;
+            margin-top: 5vh;
+            margin-bottom: 10vh;
+        }
+
+        .latest-additions, .movies-showcase {
+            margin-top: 5vh;
+            width: 100%;
+        }
+
+        .latest-additions-movies, .movies-showcase-movies {
+            display: flex;
+            flex-wrap: nowrap;
+            margin-top: 2vh;
+        }
+
+        .home-movies-item {
+            flex: 1;
+            text-align: center;
+            max-width: 20%;
+            padding: 15px 0;
+        }
+
+        .home-movies-item:hover {
+            background-color: rgb(240, 240, 240);
+            border-radius: 4px;
+        }
+
+        .home-movies-item-poster {
+            max-height: 20vh;
+        }
+
+        .home-movies-item-title {
+            margin-top: 1.5vh;
+            font-size: 1.8vh;
+        }
+    </style>
 }

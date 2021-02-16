@@ -7,7 +7,6 @@ namespace MMApi.Enums
     public enum SearchType
     {
         movie,
-        series,
-        episode
+        series
     }
 }

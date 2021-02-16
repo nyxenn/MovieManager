@@ -26,5 +26,8 @@ namespace MovieManager.Areas.Content.ViewModels
 
         public string? Genre { get; set; } = "";
 
+        public bool IsMovie { get; set; }
+        public bool IsSeries { get; set; }
+
     }
 }

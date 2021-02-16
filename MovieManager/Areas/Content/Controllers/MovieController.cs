@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MMApi.DataAccess;
 using MMApi.Internal.DataAccess;
@@ -11,6 +12,7 @@ using Newtonsoft.Json;
 namespace MovieManager.Areas.Content.Controllers
 {
     [Area("Content")]
+    [Authorize]
     public class MovieController : Controller
     {
         private readonly MovieContext _context;

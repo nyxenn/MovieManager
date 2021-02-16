@@ -28,7 +28,7 @@
 
         <div class="col">
             <div class="form-check">
-                @Html.RadioButtonFor(model => model.Type, "movie", new { @class = "form-check-input", @checked = Model.Type == "movie" })
+                @Html.CheckBoxFor(model => model.IsMovie, new { @class = "form-check-input", @checked = Model.Type == "movie" || Model.Type == "any" })
                 <label class="form-check-label" for="Type">
                     Movies
                 </label>
@@ -52,7 +52,7 @@
 
         <div class="col">
             <div class="form-check">
-                @Html.RadioButtonFor(model => model.Type, "series", new { @class = "form-check-input", @checked = Model.Type == "series" })
+                @Html.CheckBoxFor(model => model.IsSeries, new { @class = "form-check-input", @checked = Model.Type == "series" || Model.Type == "any" })
                 <label class="form-check-label" for="Type">
                     Series
                 </label>
@@ -80,7 +80,7 @@
 
 @if (@Model.Source == "omdb")
 {
-    if (Model.ApiMovies.Count() > 0)
+    if (Model.ApiMovies != null && Model.ApiMovies.Count() > 0)
     {
         <div class="list-movies">
             @foreach (var movie in Model.ApiMovies)
@@ -111,7 +111,7 @@
 
 else if (Model.Source == "local")
 {
-    <vc:local-movies search-title="@Model.Title" search-type="@Model.Type"></vc:local-movies>
+    <vc:local-movies search-title="@Model.Title" search-type="@Model.Type" person="@Model.Person" page="@Model.Page" genre="@Model.Genre"></vc:local-movies>
 }
 
 @section Style {
@@ -142,10 +142,21 @@ else if (Model.Source == "local")
         .list-movie {
             width: 25%;
             text-align: center;
+            margin-top: 2vh;
+            margin-bottom: 2vh;
+            padding-top: 3vh;
+            padding-bottom: 3vh;
+        }
+
+        .list-movie:hover {
+            background-color: rgb(240, 240, 240);
+            box-shadow: 3px 0px 8px rgb(220, 220, 220);
+            border-radius: 4px;
         }
 
         .list-movie-poster {
             width: 75%;
+            max-height: 32vh;
         }
 
         .list-movie-title {

@@ -4,22 +4,110 @@
     ViewData["Title"] = Model.UserList.Title;
 }
 
-<p>@Model.UserList.Title</p>
 
-@if (Model.UserList.Movies == null || Model.UserList.Movies.Count == 0)
-{
-    <p>No movies added yet!</p>
-}
-else
-{
-    @foreach (var listMovie in Model.UserList.Movies)
-    {
-        <a asp-area="Content"
-           asp-controller="Movie"
-           asp-action="Details"
-           asp-route-title="@listMovie.Movie.Title"
-           asp-route-type="@listMovie.Movie.Type">
-            @listMovie.Movie.Title
-        </a>
-    }
+
+<div class="list-overview">
+    <h2>@Model.UserList.Title</h2>
+
+    <div class="list-overview-movies">
+        @if (Model.UserList.Movies == null || Model.UserList.Movies.Count == 0)
+        {
+            <p>No movies added yet!</p>
+        }
+        else
+        {
+            <table>
+                <tr class="list-headers">
+                    <th></th>
+                    <th>Title</th>
+                    <th>Remove</th>
+                </tr>
+
+                @foreach (var listMovie in Model.UserList.Movies)
+                {
+                    <tr class="list-row">
+                        <td>
+                            <a asp-area="Content"
+                               asp-controller="Movie"
+                               asp-action="Details"
+                               asp-route-title="@listMovie.Movie.Title"
+                               asp-route-type="@listMovie.Movie.Type">
+                                <img src="@listMovie.Movie.Poster" alt="@listMovie.Movie.Title" class="list-overview-poster" />
+                            </a>
+                        </td>
+
+                        <td>
+                            <a asp-area="Content"
+                               asp-controller="Movie"
+                               asp-action="Details"
+                               asp-route-title="@listMovie.Movie.Title"
+                               asp-route-type="@listMovie.Movie.Type">
+                                @listMovie.Movie.Title
+                            </a>
+                        </td>
+
+                        <td>
+                            <a asp-area="Content"
+                               asp-controller="List"
+                               asp-action="RemoveMovieFromList"
+                               asp-route-listID="@Model.UserList.UserListID"
+                               asp-route-movieTitle="@listMovie.Movie.Title"
+                               asp-route-movieType="@listMovie.Movie.Type"
+                               asp-route-isDefault="@Model.UserList.IsDefault">
+                                Remove
+                            </a>
+                        </td>
+                        
+                    </tr>
+                }
+            </table>
+        }
+    </div>
+</div>
+
+
+
+@section Style {
+    <style>
+        .list-overview {
+            margin-top: 5vh;
+        }
+
+        .list-overview-movies {
+            margin-top: 5vh;
+        }
+
+        .list-overview-poster {
+            height: 6vh;
+        }
+
+        .list-overview table {
+            width: 100%;
+        }
+
+        .list-headers {
+            font-size: 2.2vh;
+        }
+
+        .list-headers, .list-row {
+            height: 8vh;
+        }
+
+        .list-row:nth-child(2n) {
+            background-color: rgb(235, 235, 235);
+        }
+
+        .list-row td {
+            font-size: 1.8vh;
+        }
+
+        .list-row td:nth-child(1), .list-headers th:nth-child(1) {
+            padding-left: 15px;
+            width: 8vh;
+        }
+
+        .list-row td:nth-child(2n), .list-headers th:nth-child(2n) {
+            min-width: 80%;
+        }
+    </style>
 }
