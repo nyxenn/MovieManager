@@ -16,6 +16,7 @@ namespace MMApi.DataAccess
     public class MovieHandler
     {
         private readonly MovieContext _context;
+        private readonly string _baseUri = "http://www.omdbapi.com";
 
         public MovieHandler(MovieContext context)
         {
@@ -26,20 +27,15 @@ namespace MMApi.DataAccess
         {
             ApiMovie movie = null;
 
-            var builder = new UriBuilder("http://www.omdbapi.com");
+            var builder = new UriBuilder(_baseUri);
             var query = HttpUtility.ParseQueryString(builder.Query);
 
-            query["i"] = "tt3896198";
             query["apikey"] = "83c8b654";
             query["t"] = title;
 
             if (type != null && Enum.TryParse<SearchType>(type, out SearchType searchType) )
             {
                 query["type"] = type;
-            }
-            else
-            {
-                query["type"] = "movie";
             }
 
             builder.Query = query.ToString();
@@ -52,8 +48,55 @@ namespace MMApi.DataAccess
                     movie = await response.Content.ReadAsAsync<ApiMovie>();
                 }
             }
+            movie.ActorList = CreateApiListItems(movie.Actors.Split(','));
+            movie.WriterList = CreateApiListItems(movie.Writer.Split(','));
+            movie.DirectorList = CreateApiListItems(movie.Director.Split(','));
+            movie.GenreList = CreateApiListItems(movie.Genre.Split(','));
 
             return movie;
+        }
+
+        public async Task<ApiMovies> GetApiMovies(string title = "", string type = "", int page = 1)
+        {
+            ApiMovies movies = new ApiMovies();
+
+            var builder = new UriBuilder(_baseUri);
+            var query = HttpUtility.ParseQueryString(builder.Query);
+
+            query["apikey"] = "83c8b654";
+            query["s"] = title;
+            query["page"] = "" + page;
+
+            if (type != null && Enum.TryParse<SearchType>(type, out SearchType searchType))
+            {
+                query["type"] = type;
+            }
+
+            builder.Query = query.ToString();
+            string url = builder.ToString();
+
+            using (HttpResponseMessage response = await ApiHelper.ApiClient.GetAsync(url))
+            {
+                if (response.IsSuccessStatusCode)
+                {
+                    movies = await response.Content.ReadAsAsync<ApiMovies>();
+                }
+            }
+
+            return movies;
+        }
+
+        public List<ApiListItem> CreateApiListItems(string[] splitString)
+        {
+            List<ApiListItem> apiListItems = new List<ApiListItem>();
+
+            foreach (var s in splitString)
+            {
+                ApiListItem a = new ApiListItem(s.Trim());
+                apiListItems.Add(a);
+            }
+
+            return apiListItems;
         }
 
         public async Task<List<Movie>> GetLocalMovies(string title, string type)
@@ -100,6 +143,7 @@ namespace MMApi.DataAccess
 
             movie.People = moviePersonnel;
             movie.Genres = genres;
+            movie.imdbID = apiMovie.imdbID; 
 
             _context.Movies.Add(movie);
             await _context.SaveChangesAsync();

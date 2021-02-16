@@ -1,0 +1,59 @@
+﻿@model IEnumerable<LocalMovie>
+
+@{
+}
+
+<div class="list-movies">
+
+    @if (Model.Count() > 0)
+    {
+        @foreach (var movie in Model)
+        {
+            <div class="list-movie">
+                <a asp-area="Content"
+                   asp-controller="Movie"
+                   asp-action="Details"
+                   asp-route-title="@movie.Title"
+                   asp-route-type="@movie.Type">
+                    <img src="@movie.Poster" alt="@movie.Title" class="list-movie-poster" />
+                    <p class="list-movie-title">
+                        @movie.Title
+                    </p>
+                </a>
+
+                <add-to-list title="@movie.Title" type="@movie.Type" />
+            </div>
+        }
+    }
+    else
+    {
+        <p>No movies found matching your criteria.</p>
+    }
+
+</div>
+
+@section Style {
+    <style>
+        .list-movies {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            margin-top: 50px;
+        }
+
+        .list-movie {
+            width: 25%;
+            text-align: center;
+        }
+
+        .list-movie-poster {
+            width: 75%;
+        }
+
+        .list-movie-title {
+            margin-top: 8px;
+            font-size: 2.2vh;
+        }
+    </style>
+} 

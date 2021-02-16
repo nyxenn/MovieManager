@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace MMApi.Models
+namespace MovieManager.Areas.Content.Models
 {
     public class ApiMovie
     {
@@ -12,13 +12,9 @@ namespace MMApi.Models
         public string Released { get; set; }
         public string Runtime { get; set; }
         public string Genre { get; set; }
-        public List<ApiListItem> GenreList { get; set; }
         public string Director { get; set; }
-        public List<ApiListItem> DirectorList { get; set; }
         public string Writer { get; set; }
-        public List<ApiListItem> WriterList { get; set; }
         public string Actors { get; set; }
-        public List<ApiListItem> ActorList { get; set; }
         public string Plot { get; set; }
         public string Language { get; set; }
         public string Country { get; set; }

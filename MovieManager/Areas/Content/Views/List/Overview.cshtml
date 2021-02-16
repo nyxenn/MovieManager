@@ -14,6 +14,12 @@ else
 {
     @foreach (var listMovie in Model.UserList.Movies)
     {
-        <p>@listMovie.Movie.Title</p>
+        <a asp-area="Content"
+           asp-controller="Movie"
+           asp-action="Details"
+           asp-route-title="@listMovie.Movie.Title"
+           asp-route-type="@listMovie.Movie.Type">
+            @listMovie.Movie.Title
+        </a>
     }
 }

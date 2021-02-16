@@ -4,48 +4,153 @@
     ViewData["Title"] = "Search";
 }
 
-<form asp-action="Index" method="post">
-    <input type="text" asp-for="Title" value="peaky" />
+<form asp-action="Index" method="post" class="search-form">
+    
+    <div class="row">
+        <div class="col"><h4>Parameters</h4></div>
+        <div class="col"><h4>Source</h4></div>
+        <div class="col"><h4>Type</h4></div>
+    </div>
 
-    <input type="radio" asp-for="Type" value="movie" /> Movies
-    <input type="radio" asp-for="Type" value="series" checked="" /> Series
-    <input type="radio" asp-for="Type" value="episode" /> Episodes
+    <div class="row">
+        <div class="col">
+            <input type="text" asp-for="Title" value="@Model.Title" class="form-control" placeholder="Title" />
+        </div>
 
-    <input type="radio" asp-for="Source" value="omdb" /> OMDb
-    <input type="radio" asp-for="Source" value="local" checked="" /> Local
+        <div class="col">
+            <div class="form-check">
+                @Html.RadioButtonFor(model => model.Source, "omdb", new { @class = "form-check-input", @checked = Model.Source == "omdb" })
+                <label class="form-check-label" for="Source">
+                    OMDb
+                </label>
+            </div>
+        </div>
 
-    <br />
+        <div class="col">
+            <div class="form-check">
+                @Html.RadioButtonFor(model => model.Type, "movie", new { @class = "form-check-input", @checked = Model.Type == "movie" })
+                <label class="form-check-label" for="Type">
+                    Movies
+                </label>
+            </div>
+        </div>
+    </div>
 
-    <input type="submit" name="name" value="Submit" />
+    <div class="row">
+        <div class="col">
+            <input type="text" asp-for="Person" value="@Model.Person" class="form-control" placeholder="Actor / Writer / Director" />
+        </div>
+
+        <div class="col">
+            <div class="form-check">
+                @Html.RadioButtonFor(model => model.Source, "local", new { @class = "form-check-input", @checked = Model.Source == "local" })
+                <label class="form-check-label" for="Source">
+                    Local
+                </label>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="form-check">
+                @Html.RadioButtonFor(model => model.Type, "series", new { @class = "form-check-input", @checked = Model.Type == "series" })
+                <label class="form-check-label" for="Type">
+                    Series
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <input type="text" asp-for="Genre" value="@Model.Genre" class="form-control" placeholder="Genre" />
+        </div>
+        <div class="col"></div>
+        <div class="col"></div>
+    </div>
+
+    <div class="row">
+        <div class="col"></div>
+        <div class="col"><button type="submit" class="btn btn-primary col-md-8">Submit</button></div>
+        <div class="col"></div>
+    </div>
+
+    
 </form>
 
 
 @if (@Model.Source == "omdb")
 {
-    <h2>@Model.Movie.Title</h2>
+    if (Model.ApiMovies.Count() > 0)
+    {
+        <div class="list-movies">
+            @foreach (var movie in Model.ApiMovies)
+            {
+                <div class="list-movie">
+                    <a asp-area="Content"
+                       asp-controller="Movie"
+                       asp-action="Details"
+                       asp-route-title="@movie.Title"
+                       asp-route-type="@movie.Type">
+                        <img src="@movie.Poster" alt="@movie.Title" class="list-movie-poster" />
+                        <p class="list-movie-title">
+                            @movie.Title
+                        </p>
+                    </a>
 
-    <p>@Model.Movie.Actors</p>
-    <p>@Model.Movie.Plot</p>
+                    <add-to-list title="@movie.Title" type="@movie.Type" />
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div>No movies found matching your criteria.</div>
+    }
 
-    <add-to-list uid="@Model.UserID" title="@Model.Movie.Title" type="@Model.Movie.Type" />
 }
 
 else if (Model.Source == "local")
 {
-    if (Model.Movies.Count > 0)
-    {
-        foreach (var movie in Model.Movies)
-        {
-            <h2>@movie.Title</h2>
-
-            <p>@movie.Type</p>
-
-            <add-to-list title="@movie.Title" type="@movie.Type" />
-        }
-    }
-    else
-    {
-        <p>No movies found matching your criteria.</p>
-    }
-
+    <vc:local-movies search-title="@Model.Title" search-type="@Model.Type"></vc:local-movies>
 }
+
+@section Style {
+    <style>
+        .search-form {
+            margin-top: 5vh;
+            margin-bottom: 2vh;
+            background-color: rgb(220, 220, 220);
+            padding: 20px;
+            border: 1px solid rgb(200, 200, 200);
+            border-radius: 4px;
+            box-shadow: 3px 0px 8px rgb(220, 220, 220);
+            text-align: center;
+        }
+
+        .search-form .row {
+            margin-top: 8px;
+        }
+
+        .list-movies {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            margin-top: 50px;
+        }
+
+        .list-movie {
+            width: 25%;
+            text-align: center;
+        }
+
+        .list-movie-poster {
+            width: 75%;
+        }
+
+        .list-movie-title {
+            margin-top: 8px;
+            font-size: 2.2vh;
+        }
+    </style>
+} 

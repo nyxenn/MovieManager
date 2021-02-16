@@ -19,6 +19,9 @@ namespace MMApi.Models
         [Required]
         public string Poster { get; set; }
 
+        [Required]
+        public string imdbID { get; set; }
+
         public virtual ICollection<MoviePerson> People { get; set; }
 
         public virtual ICollection<MovieGenre> Genres { get; set; }

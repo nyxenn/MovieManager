@@ -8,19 +8,23 @@ namespace MovieManager.Areas.Content.ViewModels
 {
     public class MovieSearchViewModel
     {
-        public ApiMovie? Movie { get; set; }
+        public List<ApiMovieShort> ApiMovies { get; set; } = new List<ApiMovieShort>();
 
         public List<Movie> Movies { get; set; } = new List<Movie>();
 
         public string? Title { get; set; }
 
-        public string? Type { get; set; }
+        public string Type { get; set; } = "movie";
 
-        public string? Source { get; set; }
+        public string Source { get; set; } = "local";
 
-        public int? DefaultList { get; set; }
+        public string? UserID { get; set; } = "";
 
-        public string? UserID { get; set; }
+        public int Page { get; set; } = 1;
+
+        public string? Person { get; set; } = "";
+
+        public string? Genre { get; set; } = "";
 
     }
 }

@@ -67,16 +67,21 @@ namespace MMApi.DataAccess
         public async Task<List<UserListAdded>> GetListsWithMovieAdded(List<UserList> lists, Movie movie)
         {
             List<UserListAdded> listsWithMovieAdded = new List<UserListAdded>();
+
             List<int> listIds = lists.Select(l => l.UserListID).ToList();
             List<int> addedLists = new List<int>();
 
-            addedLists =
+            if (movie != null)
+            {
+                addedLists =
                 await _context.ListMovies
                 .Where(lm =>
                     listIds.Contains(lm.UserListID)
                     && lm.MovieID == movie.MovieID)
                 .Select(lm => lm.UserListID)
                 .ToListAsync();
+            }
+            
 
             foreach (var list in lists)
             {

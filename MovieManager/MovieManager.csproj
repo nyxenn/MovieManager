@@ -24,7 +24,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\Content\Views\Shared\Components\" />
     <Folder Include="src\assets\" />
     <Folder Include="wwwroot\dist\img\" />
   </ItemGroup>

@@ -62,6 +62,8 @@
 </body>
 </html>
 
+@RenderSection("Style", required: false)
+
 <style>
     html, body {
         height: 100%;
@@ -72,15 +74,15 @@
         margin-bottom: -90px;
     }
 
-    .page-wrap:after {
-        content: "";
-        display: block;
-    }
+        .page-wrap:after {
+            content: "";
+            display: block;
+        }
 
-    .footer, .page-wrap:after {
-        /* .push must be the same height as footer */
-        height: 90px;
-    }
+        .footer, .page-wrap:after {
+            /* .push must be the same height as footer */
+            height: 90px;
+        }
 
     .footer {
         padding: 10px;
