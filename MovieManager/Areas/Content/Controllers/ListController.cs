@@ -134,7 +134,7 @@ namespace MovieManager.Areas.Content.Controllers
         public async Task<JsonResult> GetUserLists(string title, string type)
         {
             Movie movie = await _movieHandler.GetExistingLocalMovie(title, type);
-            List<UserList> lists = _userLists.GetLists();
+            List<UserList> lists = await _listHandler.GetListsForUser(User.FindFirstValue(ClaimTypes.NameIdentifier));
             var listsWithMovieAdded = await _listHandler.GetListsWithMovieAdded(lists, movie);
 
             return Json(listsWithMovieAdded);
