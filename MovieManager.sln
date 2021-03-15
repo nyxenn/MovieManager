@@ -10,6 +10,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CE7CF011-DF82-4C20-85D0-B0C63626912A}"
 	ProjectSection(SolutionItems) = preProject
 		C:\Users\Jordi\Documents\Models.png = C:\Users\Jordi\Documents\Models.png
+		README.md = README.md
 	EndProjectSection
 EndProject
 Global
